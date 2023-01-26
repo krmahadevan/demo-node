@@ -91,6 +91,17 @@ public class DecoratedLoggingNode extends Node {
   }
 
   @Override
+  public HttpResponse downloadFile(HttpRequest req, SessionId id) {
+    try {
+      log.info("[COMMENTATOR] Before downloadFile()");
+      return node.downloadFile(req, id);
+    } finally {
+      log.info("[COMMENTATOR] After downloadFile()");
+    }
+
+  }
+
+  @Override
   public void stop(SessionId id) throws NoSuchSessionException {
     try {
       log.info("[COMMENTATOR] Before stop()");
