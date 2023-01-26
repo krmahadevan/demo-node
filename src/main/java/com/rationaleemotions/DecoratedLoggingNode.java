@@ -2,6 +2,7 @@ package com.rationaleemotions;
 
 import java.net.URI;
 import java.util.UUID;
+import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
 import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.NoSuchSessionException;
@@ -34,13 +35,14 @@ public class DecoratedLoggingNode extends Node {
     super(tracer, new NodeId(UUID.randomUUID()), uri, registrationSecret);
   }
 
+  @SuppressWarnings("unused")
   public static Node create(Config config) {
     LoggingOptions loggingOptions = new LoggingOptions(config);
     BaseServerOptions serverOptions = new BaseServerOptions(config);
     URI uri = serverOptions.getExternalUri();
     SecretOptions secretOptions = new SecretOptions(config);
 
-    // Refer to the foot notes for additional context on this line.
+    // Refer to the footnotes for additional context on this line.
     Node node = LocalNodeFactory.create(config);
 
     DecoratedLoggingNode wrapper = new DecoratedLoggingNode(loggingOptions.getTracer(),
@@ -52,123 +54,79 @@ public class DecoratedLoggingNode extends Node {
   @Override
   public Either<WebDriverException, CreateSessionResponse> newSession(
       CreateSessionRequest sessionRequest) {
-    log.info("[COMMENTATOR] Before newSession()");
-    try {
-      return this.node.newSession(sessionRequest);
-    } finally {
-      log.info("[COMMENTATOR] After newSession()");
-    }
+    return perform(() -> node.newSession(sessionRequest), "newSession");
   }
 
   @Override
   public HttpResponse executeWebDriverCommand(HttpRequest req) {
-    try {
-      log.info("[COMMENTATOR] Before executeWebDriverCommand(): " + req.getUri());
-      return node.executeWebDriverCommand(req);
-    } finally {
-      log.info("[COMMENTATOR] After executeWebDriverCommand()");
-    }
+    return perform(() -> node.executeWebDriverCommand(req), "executeWebDriverCommand");
   }
 
   @Override
   public Session getSession(SessionId id) throws NoSuchSessionException {
-    try {
-      log.info("[COMMENTATOR] Before getSession()");
-      return node.getSession(id);
-    } finally {
-      log.info("[COMMENTATOR] After getSession()");
-    }
+    return perform(() -> node.getSession(id), "getSession");
   }
 
   @Override
   public HttpResponse uploadFile(HttpRequest req, SessionId id) {
-    try {
-      log.info("[COMMENTATOR] Before uploadFile()");
-      return node.uploadFile(req, id);
-    } finally {
-      log.info("[COMMENTATOR] After uploadFile()");
-    }
+    return perform(() -> node.uploadFile(req, id), "uploadFile");
   }
 
   @Override
   public HttpResponse downloadFile(HttpRequest req, SessionId id) {
-    try {
-      log.info("[COMMENTATOR] Before downloadFile()");
-      return node.downloadFile(req, id);
-    } finally {
-      log.info("[COMMENTATOR] After downloadFile()");
-    }
-
+    return perform(() -> node.downloadFile(req, id), "downloadFile");
   }
 
   @Override
   public void stop(SessionId id) throws NoSuchSessionException {
-    try {
-      log.info("[COMMENTATOR] Before stop()");
-      node.stop(id);
-    } finally {
-      log.info("[COMMENTATOR] After stop()");
-    }
+    perform(() -> node.stop(id), "stop");
   }
 
   @Override
   public boolean isSessionOwner(SessionId id) {
-    try {
-      log.info("[COMMENTATOR] Before isSessionOwner()");
-      return node.isSessionOwner(id);
-    } finally {
-      log.info("[COMMENTATOR] After isSessionOwner()");
-    }
+    return perform(() -> node.isSessionOwner(id), "isSessionOwner");
   }
 
   @Override
   public boolean isSupporting(Capabilities capabilities) {
-    try {
-      log.info("[COMMENTATOR] Before isSupporting");
-      return node.isSupporting(capabilities);
-    } finally {
-      log.info("[COMMENTATOR] After isSupporting()");
-    }
+    return perform(() -> node.isSupporting(capabilities), "isSupporting");
   }
 
   @Override
   public NodeStatus getStatus() {
-    try {
-      log.info("[COMMENTATOR] Before getStatus()");
-      return node.getStatus();
-    } finally {
-      log.info("[COMMENTATOR] After getStatus()");
-    }
+    return perform(() -> node.getStatus(), "getStatus");
   }
 
   @Override
   public HealthCheck getHealthCheck() {
-    try {
-      log.info("[COMMENTATOR] Before getHealthCheck()");
-      return node.getHealthCheck();
-    } finally {
-      log.info("[COMMENTATOR] After getHealthCheck()");
-    }
+    return perform(() -> node.getHealthCheck(), "getHealthCheck");
   }
 
   @Override
   public void drain() {
-    try {
-      log.info("[COMMENTATOR] Before drain()");
-      node.drain();
-    } finally {
-      log.info("[COMMENTATOR] After drain()");
-    }
-
+    perform(() -> node.drain(), "drain");
   }
 
   @Override
   public boolean isReady() {
+    return perform(() -> node.isReady(), "isReady");
+  }
+
+  private void perform(Runnable function, String operation) {
     try {
-      log.info("[COMMENTATOR] Before isReady()");
-      return node.isReady();
+      log.info("[COMMENTATOR] Before {}()", operation);
+      function.run();
     } finally {
-      log.info("[COMMENTATOR] After isReady()");
+      log.info("[COMMENTATOR] After {}}()", operation);
+    }
+  }
+
+  private <T> T perform(Supplier<T> function, String operation) {
+    try {
+      log.info("[COMMENTATOR] Before {}()", operation);
+      return function.get();
+    } finally {
+      log.info("[COMMENTATOR] After {}()", operation);
     }
   }
 }
