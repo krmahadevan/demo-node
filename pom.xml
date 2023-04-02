@@ -10,7 +10,8 @@
     <jdk.version>11</jdk.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
-    <selenium.version>4.8.0</selenium.version>
+    <selenium.version>4.8.3</selenium.version>
+    <grid.version>4.8.0</grid.version>
   </properties>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-grid -->
@@ -46,7 +47,7 @@
           </execution>
         </executions>
         <configuration>
-          <url>https://github.com/SeleniumHQ/selenium/releases/download/selenium-${selenium.version}/selenium-server-${selenium.version}.jar</url>
+          <url>https://github.com/SeleniumHQ/selenium/releases/download/selenium-${grid.version}/selenium-server-${grid.version}.jar</url>
           <outputDirectory>${project.build.directory}/jars</outputDirectory>
         </configuration>
       </plugin>

@@ -1,5 +1,6 @@
 package com.rationaleemotions;
 
+import java.io.IOException;
 import java.net.URI;
 import java.util.UUID;
 import java.util.function.Supplier;
@@ -21,6 +22,7 @@ import org.openqa.selenium.grid.security.Secret;
 import org.openqa.selenium.grid.security.SecretOptions;
 import org.openqa.selenium.grid.server.BaseServerOptions;
 import org.openqa.selenium.internal.Either;
+import org.openqa.selenium.io.TemporaryFilesystem;
 import org.openqa.selenium.remote.SessionId;
 import org.openqa.selenium.remote.http.HttpRequest;
 import org.openqa.selenium.remote.http.HttpResponse;
@@ -75,6 +77,29 @@ public class DecoratedLoggingNode extends Node {
   @Override
   public HttpResponse downloadFile(HttpRequest req, SessionId id) {
     return perform(() -> node.downloadFile(req, id), "downloadFile");
+  }
+
+  @Override
+  public TemporaryFilesystem getDownloadsFilesystem(UUID uuid) {
+    return perform(() -> {
+      try {
+        return node.getDownloadsFilesystem(uuid);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }, "downloadsFilesystem");
+  }
+
+  @Override
+  public TemporaryFilesystem getUploadsFilesystem(SessionId id) throws IOException {
+    return perform(() -> {
+      try {
+        return node.getUploadsFilesystem(id);
+      } catch (IOException e) {
+        throw new RuntimeException(e);
+      }
+    }, "uploadsFilesystem");
+
   }
 
   @Override
