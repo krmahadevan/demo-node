@@ -4,12 +4,16 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URL;
 import java.nio.file.Files;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class Demonstration {
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws IOException, InterruptedException {
+    System.err.println("Sleeping for 30 seconds before starting test case.");
+    TimeUnit.SECONDS.sleep(30);
     RemoteWebDriver driver = null;
     try {
       driver = new RemoteWebDriver(new URL("http://localhost:4444"), new ChromeOptions());
@@ -48,7 +52,7 @@ public class Demonstration {
 
   private static boolean isSeleniumJarCommand(ProcessHandle handle) {
     return handle.info().commandLine()
-        .map(cmd -> cmd.contains("target/jars/selenium-server-4.8.0.jar"))
+        .map(cmd -> cmd.contains("target/jars/selenium-server-4.17.0.jar"))
         .orElse(false);
   }
 

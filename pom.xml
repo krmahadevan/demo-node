@@ -10,8 +10,8 @@
     <jdk.version>11</jdk.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
-    <selenium.version>4.8.3</selenium.version>
-    <grid.version>4.8.0</grid.version>
+    <selenium.version>4.17.0</selenium.version>
+    <grid.version>4.17.0</grid.version>
   </properties>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-grid -->
