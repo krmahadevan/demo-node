@@ -50,10 +50,16 @@ public class Demonstration {
         .forEach(ProcessHandle::destroy);
   }
 
+  private static final String VERSION = version();
+
   private static boolean isSeleniumJarCommand(ProcessHandle handle) {
     return handle.info().commandLine()
-        .map(cmd -> cmd.contains("target/jars/selenium-server-4.17.0.jar"))
+        .map(cmd -> cmd.contains("target/jars/selenium-server-" + VERSION + ".jar"))
         .orElse(false);
+  }
+
+  private static String version() {
+    return System.getenv().getOrDefault("version", "4.28.0");
   }
 
   private static void prettyPrint(ProcessHandle handle) {

@@ -10,8 +10,8 @@
     <jdk.version>11</jdk.version>
     <maven.compiler.source>${jdk.version}</maven.compiler.source>
     <maven.compiler.target>${jdk.version}</maven.compiler.target>
-    <selenium.version>4.17.0</selenium.version>
-    <grid.version>4.17.0</grid.version>
+    <selenium.version>4.28.1</selenium.version>
+    <grid.version>4.28.0</grid.version>
   </properties>
   <dependencies>
     <!-- https://mvnrepository.com/artifact/org.seleniumhq.selenium/selenium-grid -->
@@ -32,6 +32,22 @@
     </dependency>
   </dependencies>
   <build>
+    <resources>
+      <resource>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
+        <directory>src/main/resources</directory>
+        <filtering>false</filtering>
+      </resource>
+      <resource>
+        <includes>
+          <include>**/*.properties</include>
+        </includes>
+        <directory>src/main/resources</directory>
+        <filtering>true</filtering>
+      </resource>
+    </resources>
     <plugins>
       <plugin>
         <groupId>com.googlecode.maven-download-plugin</groupId>
@@ -54,7 +70,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>3.8.1</version>
+        <version>3.13.0</version>
         <configuration>
           <encoding>UTF-8</encoding>
           <source>${jdk.version}</source>

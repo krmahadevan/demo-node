@@ -2,6 +2,7 @@ package com.rationaleemotions;
 
 import java.io.IOException;
 import java.net.URI;
+import java.time.Duration;
 import java.util.UUID;
 import java.util.function.Supplier;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +35,7 @@ public class DecoratedLoggingNode extends Node {
   private Node node;
 
   protected DecoratedLoggingNode(Tracer tracer, NodeId nodeId, URI uri, Secret registrationSecret) {
-    super(tracer, nodeId, uri, registrationSecret);
+    super(tracer, nodeId, uri, registrationSecret, Duration.ofMinutes(2));
   }
 
   @SuppressWarnings("unused")
@@ -52,6 +53,11 @@ public class DecoratedLoggingNode extends Node {
         uri, secretOptions.getRegistrationSecret());
     wrapper.node = node;
     return wrapper;
+  }
+
+  @Override
+  public void releaseConnection(SessionId id) {
+    this.node.releaseConnection(id);
   }
 
   @Override
@@ -111,6 +117,11 @@ public class DecoratedLoggingNode extends Node {
   @Override
   public boolean isSessionOwner(SessionId id) {
     return perform(() -> node.isSessionOwner(id), "isSessionOwner");
+  }
+
+  @Override
+  public boolean tryAcquireConnection(SessionId id) {
+    return node.tryAcquireConnection(id);
   }
 
   @Override
